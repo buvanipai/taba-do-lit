@@ -44,12 +44,26 @@ No markdown, no explanation outside the JSON.`;
 }
 
 export async function extractTasksFromText(rawText) {
-  const prompt = `Extract to-do items from this scanned/OCR text. Clean up any OCR errors. Return ONLY a valid JSON array of objects with { text: string, priority: "high"|"medium"|"low", timeEstimate: string|null }.
+  const prompt = `Extract to-do items from this scanned/OCR text. The text may have OCR errors — clean them up using context. Each numbered or bulleted item is a task. Ignore background text, page numbers, or noise.
+
+Return ONLY a valid JSON array of objects with { text: string, priority: "high"|"medium"|"low", timeEstimate: string|null }.
 
 Scanned text:
 ${rawText}
 
-No markdown. JSON only.`;
+No markdown. JSON only. If no tasks found, return [].`;
 
-  return callClaude(prompt, 0.1);
+  try {
+    const result = await callClaude(prompt, 0.1);
+    if (Array.isArray(result) && result.length > 0) return result;
+  } catch (e) {
+    console.warn('Claude extraction failed, falling back to line split:', e.message);
+  }
+
+  // Fallback: split by lines, strip numbering
+  return rawText
+    .split('\n')
+    .map(l => l.replace(/^\s*\d+[\.\)]\s*/, '').trim())
+    .filter(l => l.length > 2)
+    .map(text => ({ text, priority: 'medium', timeEstimate: null }));
 }

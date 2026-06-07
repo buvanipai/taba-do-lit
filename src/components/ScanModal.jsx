@@ -40,6 +40,7 @@ export default function ScanModal({ onClose, onAddTodos }) {
       });
       const { data: { text } } = await worker.recognize(jpeg);
       await worker.terminate();
+      console.log('OCR raw text:', text);
 
       const extracted = await extractTasksFromText(text);
       setTasks(extracted);
