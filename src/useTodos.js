@@ -3,7 +3,7 @@ import {
   collection, addDoc, updateDoc, deleteDoc,
   doc, onSnapshot, query, orderBy, serverTimestamp
 } from 'firebase/firestore';
-import { db, ensureAuth } from './firebase';
+import { db, onAuthChange } from './firebase';
 
 export function useTodos() {
   const [todos, setTodos] = useState([]);
@@ -11,11 +11,13 @@ export function useTodos() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    ensureAuth().then(user => setUserId(user.uid));
+    const unsub = onAuthChange(user => setUserId(user?.uid || null));
+    return unsub;
   }, []);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId) { setLoading(false); return; }
+    setLoading(true);
     const q = query(
       collection(db, 'users', userId, 'todos'),
       orderBy('order', 'asc')
@@ -58,5 +60,5 @@ export function useTodos() {
     await Promise.all(updates);
   }, [userId]);
 
-  return { todos, loading, addTodo, updateTodo, deleteTodo, reorderTodos };
+  return { todos, loading, userId, addTodo, updateTodo, deleteTodo, reorderTodos };
 }
