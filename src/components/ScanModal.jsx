@@ -1,13 +1,11 @@
 import { useState, useRef } from 'react';
-import { createWorker } from 'tesseract.js';
-import { extractTasksFromText } from '../claude';
+import { extractTasksFromImage } from '../claude';
 
 export default function ScanModal({ onClose, onAddTodos }) {
   const [stage, setStage] = useState('pick');
   const [preview, setPreview] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [selected, setSelected] = useState(new Set());
-  const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
   const [converting, setConverting] = useState(false);
   const cameraRef = useRef();
@@ -35,14 +33,7 @@ export default function ScanModal({ onClose, onAddTodos }) {
       setPreview(URL.createObjectURL(jpeg));
       setStage('scanning');
 
-      const worker = await createWorker('eng', 1, {
-        logger: m => { if (m.status === 'recognizing text') setProgress(Math.round(m.progress * 100)); }
-      });
-      const { data: { text } } = await worker.recognize(jpeg);
-      await worker.terminate();
-      console.log('OCR raw text:', text);
-
-      const extracted = await extractTasksFromText(text);
+      const extracted = await extractTasksFromImage(jpeg);
       setTasks(extracted);
       setSelected(new Set(extracted.map((_, i) => i)));
       setStage('review');
@@ -77,33 +68,17 @@ export default function ScanModal({ onClose, onAddTodos }) {
           <div className="scan-pick">
             <p>Scan a handwritten or printed to-do list.</p>
             {error && <p className="error">{error}</p>}
+            {converting && <p className="scan-converting">Converting HEIC… one sec</p>}
 
-            {/* Hidden inputs */}
-            <input
-              ref={cameraRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              style={{ display: 'none' }}
-              onChange={e => handleFile(e.target.files[0])}
-            />
-            <input
-              ref={uploadRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              style={{ display: 'none' }}
-              onChange={e => handleFile(e.target.files[0])}
-            />
+            <input ref={cameraRef} type="file" accept="image/*" capture="environment"
+              style={{ display: 'none' }} onChange={e => handleFile(e.target.files[0])} />
+            <input ref={uploadRef} type="file" accept="image/jpeg,image/png,image/webp,image/heic"
+              style={{ display: 'none' }} onChange={e => handleFile(e.target.files[0])} />
 
             <div className="scan-buttons">
-              <button className="btn-secondary" onClick={() => uploadRef.current.click()}>
-                📁 Upload
-              </button>
-              <button className="btn-primary" onClick={() => cameraRef.current.click()}>
-                📷 Camera
-              </button>
+              <button className="btn-secondary" onClick={() => uploadRef.current.click()}>📁 Upload</button>
+              <button className="btn-primary" onClick={() => cameraRef.current.click()}>📷 Camera</button>
             </div>
-            {converting && <p className="scan-converting">Converting HEIC… one sec</p>}
           </div>
         )}
 
@@ -111,15 +86,16 @@ export default function ScanModal({ onClose, onAddTodos }) {
           <div className="scan-progress">
             {preview && <img src={preview} className="scan-preview" alt="Scanning..." />}
             <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${progress}%` }} />
+              <div className="progress-fill" style={{ width: '100%', animation: 'pulse 1.5s ease-in-out infinite' }} />
             </div>
-            <p>Reading text... {progress}%</p>
+            <p>Reading handwriting with AI…</p>
           </div>
         )}
 
         {stage === 'review' && (
           <div className="scan-review">
             <p>Select tasks to add:</p>
+            {tasks.length === 0 && <p className="error">No tasks found — try a clearer photo.</p>}
             <ul className="scan-task-list">
               {tasks.map((task, i) => (
                 <li key={i} className={`scan-task ${selected.has(i) ? 'selected' : ''}`} onClick={() => toggleSelect(i)}>
