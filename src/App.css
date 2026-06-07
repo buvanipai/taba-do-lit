@@ -1,6 +1,82 @@
 /* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Animated glass background ── */
+.bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(135deg, #0f0720 0%, #0a1628 45%, #071420 100%);
+  overflow: hidden;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  animation: orbFloat 12s ease-in-out infinite;
+}
+
+.bg-orb-1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #7c3aed, #4f46e5);
+  top: -150px; left: -100px;
+  animation-duration: 14s;
+}
+
+.bg-orb-2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #2563eb, #0ea5e9);
+  top: 20%; right: -120px;
+  animation-duration: 11s;
+  animation-delay: -4s;
+}
+
+.bg-orb-3 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, #db2777, #9333ea);
+  bottom: 10%; left: 10%;
+  animation-duration: 16s;
+  animation-delay: -8s;
+}
+
+.bg-orb-4 {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, #059669, #0891b2);
+  bottom: 30%; right: 15%;
+  animation-duration: 10s;
+  animation-delay: -2s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+#root { position: relative; z-index: 1; }
+
+/* ── Install banner ── */
+.install-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  z-index: 200;
+  font-size: 0.88rem;
+}
+
+.install-icon { font-size: 1.3rem; flex-shrink: 0; }
+.install-text { flex: 1; color: var(--text); }
+.install-btn { padding: 7px 14px; font-size: 0.82rem; flex-shrink: 0; }
+
 /* ══════════════════════════════════════════
    LIQUID GLASS THEME (default)
 ══════════════════════════════════════════ */
@@ -56,12 +132,14 @@
 /* ── Base ── */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
-  background: var(--bg);
   min-height: 100dvh;
   color: var(--text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+
+[data-theme="glass"] body { background: transparent; }
+[data-theme="neu"] body { background: var(--bg); }
 
 /* ── Layout ── */
 .app {

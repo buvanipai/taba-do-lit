@@ -4,6 +4,8 @@ import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import ScanModal from './components/ScanModal';
 import AIPrioritize from './components/AIPrioritize';
+import BgCanvas from './components/BgCanvas';
+import InstallPrompt from './components/InstallPrompt';
 import './App.css';
 
 export default function App() {
@@ -24,6 +26,9 @@ export default function App() {
   });
 
   return (
+    <>
+    <BgCanvas theme={theme} />
+    <InstallPrompt />
     <div className="app">
       <header className="app-header">
         <h1>taba</h1>
@@ -87,5 +92,6 @@ export default function App() {
         />
       )}
     </div>
+    </>
   );
 }
