@@ -3,30 +3,42 @@ import { createWorker } from 'tesseract.js';
 import { extractTasksFromText } from '../claude';
 
 export default function ScanModal({ onClose, onAddTodos }) {
-  const [stage, setStage] = useState('pick'); // pick | scanning | review
+  const [stage, setStage] = useState('pick');
   const [preview, setPreview] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [selected, setSelected] = useState(new Set());
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
-  const fileRef = useRef();
+  const [converting, setConverting] = useState(false);
+  const cameraRef = useRef();
+  const uploadRef = useRef();
+
+  async function toJpeg(file) {
+    const isHeic = file.type === 'image/heic' || file.type === 'image/heif'
+      || file.name.toLowerCase().endsWith('.heic')
+      || file.name.toLowerCase().endsWith('.heif');
+
+    if (!isHeic) return file;
+
+    setConverting(true);
+    const heic2any = (await import('heic2any')).default;
+    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+    setConverting(false);
+    return Array.isArray(blob) ? blob[0] : blob;
+  }
 
   async function handleFile(file) {
     if (!file) return;
-
-    if (file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic')) {
-      setError('HEIC photos not supported. In iPhone Camera settings → Formats → set to "Most Compatible" to shoot JPEG instead.');
-      return;
-    }
-
-    setPreview(URL.createObjectURL(file));
-    setStage('scanning');
     setError(null);
     try {
+      const jpeg = await toJpeg(file);
+      setPreview(URL.createObjectURL(jpeg));
+      setStage('scanning');
+
       const worker = await createWorker('eng', 1, {
         logger: m => { if (m.status === 'recognizing text') setProgress(Math.round(m.progress * 100)); }
       });
-      const { data: { text } } = await worker.recognize(file);
+      const { data: { text } } = await worker.recognize(jpeg);
       await worker.terminate();
 
       const extracted = await extractTasksFromText(text);
@@ -62,21 +74,35 @@ export default function ScanModal({ onClose, onAddTodos }) {
 
         {stage === 'pick' && (
           <div className="scan-pick">
-            <p>Take a photo of a handwritten or printed to-do list.</p>
+            <p>Scan a handwritten or printed to-do list.</p>
             {error && <p className="error">{error}</p>}
+
+            {/* Hidden inputs */}
             <input
-              ref={fileRef}
+              ref={cameraRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
+              accept="image/*"
               capture="environment"
               style={{ display: 'none' }}
               onChange={e => handleFile(e.target.files[0])}
             />
+            <input
+              ref={uploadRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: 'none' }}
+              onChange={e => handleFile(e.target.files[0])}
+            />
+
             <div className="scan-buttons">
-              <button className="btn-primary" onClick={() => fileRef.current.click()}>
-                📷 Camera / Upload
+              <button className="btn-secondary" onClick={() => uploadRef.current.click()}>
+                📁 Upload
+              </button>
+              <button className="btn-primary" onClick={() => cameraRef.current.click()}>
+                📷 Camera
               </button>
             </div>
+            {converting && <p className="scan-converting">Converting HEIC… one sec</p>}
           </div>
         )}
 

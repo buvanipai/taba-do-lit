@@ -473,6 +473,7 @@ body {
 .priority-badge.priority-low { color: var(--low); }
 
 .error { color: var(--high); font-size: 0.875rem; }
+.scan-converting { color: var(--text-muted); font-size: 0.85rem; text-align: center; }
 
 /* ── Login ── */
 .login-screen {
