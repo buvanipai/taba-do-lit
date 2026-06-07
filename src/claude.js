@@ -28,14 +28,25 @@ export async function prioritizeTodos(todos) {
     .map((t, i) => `${i + 1}. "${t.text}" | priority: ${t.priority} | estimated: ${t.timeEstimate || 'unknown'} | due: ${t.dueDate || 'none'}`)
     .join('\n');
 
-  const prompt = `You are a productivity assistant. Given this to-do list, return a JSON array of the same items reordered by what the user should tackle first. Consider urgency (due dates), priority level, and time required.
+  const prompt = `You are an ADHD productivity coach. Sort this to-do list so the user builds momentum and finishes what actually matters today.
+
+Sorting rules (in order of importance):
+1. OVERDUE tasks first — anything past due date is urgent
+2. Due TODAY next — can't be missed
+3. HIGH priority tasks with short time estimates (≤30min) — quick wins build dopamine momentum
+4. HIGH priority tasks with longer estimates — important but need energy
+5. MEDIUM priority, short tasks — keep momentum going
+6. MEDIUM priority, longer tasks
+7. LOW priority tasks last
+8. If time estimate is unknown, treat as medium-length
+9. Prefer shorter tasks when priority is equal — finishing tasks feels rewarding
 
 To-do list:
 ${todoList}
 
 Return ONLY valid JSON — an array of objects with fields: { originalIndex: number, reason: string }
 Indexes are 1-based matching the list above.
-Example: [{"originalIndex": 2, "reason": "Due soon and high priority"}, ...]
+Example: [{"originalIndex": 2, "reason": "Due today + quick win (15min)"}, ...]
 No markdown, no explanation outside the JSON.`;
 
   return callClaude([{ role: 'user', content: prompt }], 0.2);
