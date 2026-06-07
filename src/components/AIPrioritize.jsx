@@ -37,7 +37,7 @@ export default function AIPrioritize({ todos, onReorder }) {
       {lastReason && !error && (
         <span className="ai-reason" title={lastReason}>ⓘ</span>
       )}
-      {error && <span className="ai-error" title={error}>⚠️</span>}
+      {error && <span className="ai-error" title={error}>⚠️ {error}</span>}
     </div>
   );
 }

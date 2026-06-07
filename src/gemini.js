@@ -28,12 +28,23 @@ No markdown, no explanation outside the JSON.`;
     }),
   });
 
-  if (!response.ok) throw new Error(`Gemini error: ${response.status}`);
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(`Gemini error ${response.status}: ${err?.error?.message || response.statusText}`);
+  }
 
   const data = await response.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
   const cleaned = text.replace(/```json|```/g, '').trim();
-  return JSON.parse(cleaned);
+  const parsed = JSON.parse(cleaned);
+
+  // Gemini sometimes returns 0-based indexes despite prompt saying 1-based — normalise
+  const maxIdx = Math.max(...parsed.map(o => o.originalIndex));
+  const zeroBased = maxIdx < todos.length;
+  return parsed.map(o => ({
+    ...o,
+    originalIndex: zeroBased ? o.originalIndex + 1 : o.originalIndex,
+  }));
 }
 
 export async function extractTasksFromText(rawText) {

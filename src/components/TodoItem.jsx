@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-const PRIORITY_COLORS = { high: '#ef4444', medium: '#f59e0b', low: '#22c55e' };
-
 export default function TodoItem({ todo, onUpdate, onDelete, onDragStart, onDragEnter, onDragEnd, isDragging }) {
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
@@ -55,10 +53,7 @@ export default function TodoItem({ todo, onUpdate, onDelete, onDragStart, onDrag
         <div className="todo-meta">
           {todo.timeEstimate && <span className="meta-tag">⏱ {todo.timeEstimate}</span>}
           {todo.dueDate && <span className="meta-tag">📅 {todo.dueDate}</span>}
-          <span
-            className="meta-tag priority-tag"
-            style={{ backgroundColor: PRIORITY_COLORS[todo.priority] + '22', color: PRIORITY_COLORS[todo.priority] }}
-          >
+          <span className={`meta-tag priority-tag ${todo.priority}`}>
             {todo.priority}
           </span>
         </div>
