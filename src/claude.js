@@ -1,14 +1,10 @@
-const ANTHROPIC_API_KEY = import.meta.env.VITE_ANTHROPIC_API_KEY;
-const API_URL = 'https://api.anthropic.com/v1/messages';
+const API_URL = 'https://taba-claude-proxy.taba-proxy.workers.dev';
 
 async function callClaude(prompt, temperature = 0.2) {
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-allow-browser': 'true',
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
