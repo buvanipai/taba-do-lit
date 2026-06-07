@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTodos } from './useTodos';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
+import KanbanBoard from './components/KanbanBoard';
 import ScanModal from './components/ScanModal';
 import AIPrioritize from './components/AIPrioritize';
 import InstallPrompt from './components/InstallPrompt';
@@ -12,7 +13,8 @@ import './App.css';
 export default function App() {
   const { todos, loading, userId, addTodo, updateTodo, deleteTodo, reorderTodos } = useTodos();
   const [showScan, setShowScan] = useState(false);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('active');
+  const [view, setView] = useState('list');
 
   const filtered = todos.filter(t => {
     if (filter === 'active') return !t.completed;
@@ -44,7 +46,7 @@ export default function App() {
 
           <div className="toolbar">
             <div className="filter-tabs">
-              {['all', 'active', 'done'].map(f => (
+              {['active', 'all', 'done'].map(f => (
                 <button
                   key={f}
                   className={`filter-tab ${filter === f ? 'active' : ''}`}
@@ -55,6 +57,18 @@ export default function App() {
               ))}
             </div>
             <div className="toolbar-actions">
+              <div className="view-toggle">
+                <button
+                  className={`btn-icon view-btn ${view === 'list' ? 'active' : ''}`}
+                  onClick={() => setView('list')}
+                  title="List view"
+                >☰</button>
+                <button
+                  className={`btn-icon view-btn ${view === 'kanban' ? 'active' : ''}`}
+                  onClick={() => setView('kanban')}
+                  title="Kanban view"
+                >⊞</button>
+              </div>
               <button className="btn-icon" onClick={() => setShowScan(true)} title="Scan a page">
                 📷
               </button>
@@ -64,6 +78,12 @@ export default function App() {
 
           {loading ? (
             <div className="loading">Loading...</div>
+          ) : view === 'kanban' ? (
+            <KanbanBoard
+              todos={todos}
+              onUpdate={updateTodo}
+              onDelete={deleteTodo}
+            />
           ) : (
             <TodoList
               todos={filtered}
