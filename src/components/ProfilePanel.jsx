@@ -10,7 +10,7 @@ export default function ProfilePanel() {
 
   return (
     <>
-      <button className="theme-btn" onClick={() => setOpen(true)} title="Profile">
+      <button className="profile-avatar-btn" onClick={() => setOpen(true)} title="Profile">
         {user.photoURL
           ? <img src={user.photoURL} className="avatar-sm" alt="avatar" referrerPolicy="no-referrer" />
           : '👤'}

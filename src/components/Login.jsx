@@ -1,6 +1,7 @@
 import { signInWithGoogle } from '../firebase';
 
-export default function Login({ theme }) {
+export default function Login() {
+  const theme = 'neu';
   async function handleLogin() {
     try {
       await signInWithGoogle();
