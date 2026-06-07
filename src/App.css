@@ -977,6 +977,88 @@ body {
   box-shadow: var(--shadow);
 }
 
+/* ── Profile panel ── */
+.avatar-sm {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-lg {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.profile-modal { max-width: 380px; }
+
+.profile-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.profile-name { font-size: 1.1rem; font-weight: 700; }
+.profile-email { font-size: 0.85rem; color: var(--text-muted); }
+
+.profile-uid-box {
+  width: 100%;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+}
+
+[data-theme="glass"] .profile-uid-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); }
+[data-theme="neu"] .profile-uid-box { background: var(--surface); box-shadow: var(--shadow-inset); }
+
+.profile-uid-label { font-size: 0.75rem; color: var(--text-muted); }
+
+.profile-uid {
+  font-size: 0.75rem;
+  word-break: break-all;
+  color: var(--accent);
+  font-family: monospace;
+}
+
+.btn-copy {
+  align-self: flex-end;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+
+[data-theme="glass"] .btn-copy { background: rgba(167,139,250,0.2); color: var(--accent); border: 1px solid rgba(167,139,250,0.3); }
+[data-theme="glass"] .btn-copy:hover { background: rgba(167,139,250,0.35); }
+[data-theme="neu"] .btn-copy { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+
+.btn-signout {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--high);
+  transition: all 0.15s;
+}
+
+[data-theme="glass"] .btn-signout { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.2); }
+[data-theme="glass"] .btn-signout:hover { background: rgba(248,113,113,0.2); }
+[data-theme="neu"] .btn-signout { background: var(--surface); box-shadow: var(--shadow-sm); }
+[data-theme="neu"] .btn-signout:active { box-shadow: var(--shadow-inset); }
+
 /* ── Mobile ── */
 @media (max-width: 480px) {
   .btn-icon-sm { opacity: 0.5; }

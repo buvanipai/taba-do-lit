@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTodos } from './useTodos';
 import { auth } from './firebase';
-import { signOut } from 'firebase/auth';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import ScanModal from './components/ScanModal';
@@ -9,6 +8,7 @@ import AIPrioritize from './components/AIPrioritize';
 import BgCanvas from './components/BgCanvas';
 import InstallPrompt from './components/InstallPrompt';
 import Login from './components/Login';
+import ProfilePanel from './components/ProfilePanel';
 import './App.css';
 
 export default function App() {
@@ -56,11 +56,7 @@ export default function App() {
               onClick={() => setTheme('neu')}
               title="Neumorphism"
             >🪨</button>
-            <button
-              className="theme-btn"
-              onClick={() => signOut(auth)}
-              title="Sign out"
-            >👤</button>
+            <ProfilePanel />
           </div>
         </header>
 
