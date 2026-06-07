@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { prioritizeTodos } from '../gemini';
+import { prioritizeTodos } from '../claude';
 
 export default function AIPrioritize({ todos, onReorder }) {
   const [loading, setLoading] = useState(false);

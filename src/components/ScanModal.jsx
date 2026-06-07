@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { createWorker } from 'tesseract.js';
-import { extractTasksFromText } from '../gemini';
+import { extractTasksFromText } from '../claude';
 
 export default function ScanModal({ onClose, onAddTodos }) {
   const [stage, setStage] = useState('pick'); // pick | scanning | review
