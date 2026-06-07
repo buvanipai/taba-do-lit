@@ -325,6 +325,71 @@ body {
 .todo-item:hover .btn-icon-sm { opacity: 0.5; }
 .btn-icon-sm:hover { opacity: 1 !important; }
 
+/* ── Expand panel ── */
+.todo-item { flex-wrap: wrap; }
+.todo-item.expanded { box-shadow: var(--shadow); }
+
+.todo-expand-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid #d0d5de;
+}
+
+.expand-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.expand-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; min-width: 52px; }
+
+.todo-notes {
+  width: 100%;
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.85rem;
+  padding: 10px 12px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  box-shadow: var(--shadow-inset-sm);
+}
+
+.steps-section { display: flex; flex-direction: column; gap: 6px; }
+
+.step-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.step-row.step-done .step-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.step-text { flex: 1; font-size: 0.88rem; }
+
+.step-add-row { display: flex; gap: 6px; }
+
+.btn-add-step {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--accent);
+  font-size: 1.1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.btn-add-step:active { box-shadow: var(--shadow-inset); }
+
 /* ── States ── */
 .loading, .empty-state {
   text-align: center;
