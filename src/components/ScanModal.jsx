@@ -11,16 +11,34 @@ export default function ScanModal({ onClose, onAddTodos }) {
   const [error, setError] = useState(null);
   const fileRef = useRef();
 
+  async function normalizeToJpeg(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas conversion failed')), 'image/jpeg', 0.92);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image load failed')); };
+      img.src = url;
+    });
+  }
+
   async function handleFile(file) {
     if (!file) return;
     setPreview(URL.createObjectURL(file));
     setStage('scanning');
     setError(null);
     try {
+      const jpeg = await normalizeToJpeg(file);
       const worker = await createWorker('eng', 1, {
         logger: m => { if (m.status === 'recognizing text') setProgress(Math.round(m.progress * 100)); }
       });
-      const { data: { text } } = await worker.recognize(file);
+      const { data: { text } } = await worker.recognize(jpeg);
       await worker.terminate();
 
       const extracted = await extractTasksFromText(text);
