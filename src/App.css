@@ -383,6 +383,8 @@ body {
 .btn-close:active { box-shadow: var(--shadow-inset); }
 
 .scan-pick, .scan-review { display: flex; flex-direction: column; gap: 14px; }
+.scan-review-header { display: flex; align-items: center; justify-content: space-between; }
+.btn-select-all { font-size: 0.8rem; color: var(--accent); background: none; border: none; cursor: pointer; font-weight: 600; padding: 0; }
 .scan-buttons { display: flex; gap: 8px; justify-content: flex-end; }
 
 .btn-primary {

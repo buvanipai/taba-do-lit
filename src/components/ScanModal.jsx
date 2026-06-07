@@ -94,7 +94,16 @@ export default function ScanModal({ onClose, onAddTodos }) {
 
         {stage === 'review' && (
           <div className="scan-review">
-            <p>Select tasks to add:</p>
+            <div className="scan-review-header">
+              <p>Select tasks to add:</p>
+              {tasks.length > 0 && (
+                <button className="btn-select-all" onClick={() =>
+                  setSelected(selected.size === tasks.length ? new Set() : new Set(tasks.map((_, i) => i)))
+                }>
+                  {selected.size === tasks.length ? 'Deselect all' : 'Select all'}
+                </button>
+              )}
+            </div>
             {tasks.length === 0 && <p className="error">No tasks found — try a clearer photo.</p>}
             <ul className="scan-task-list">
               {tasks.map((task, i) => (
